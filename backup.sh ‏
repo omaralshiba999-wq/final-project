@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# [TASK 1]
+targetDirectory="/home/bach/documents"
+destinationDirectory="/home/bach/backup"
+
+# [TASK 2]
+echo "Target Directory: $targetDirectory"
+echo "Destination Directory: $destinationDirectory"
+
+# [TASK 3]
+currentTS=$(date +%s)
+echo "Current Timestamp: $currentTS"
+
+# [TASK 4]
+backupFileName="backup-${currentTS}.tar.gz"
+
+# [TASK 5]
+origAbsPath=$(realpath "$targetDirectory")
+
+# [TASK 6]
+destAbsPath=$(realpath "$destinationDirectory")
+
+# [TASK 7]
+cd "$origAbsPath" || exit 1
+
+# [TASK 8]
+yesterdayTS=$((currentTS - 86400))
+
+# [TASK 9] and [TASK 11]
+toBackup=()
+while IFS= read -r file; do
+    toBackup+=("$file")
+done < <(find . -type f -newermt "$(date -d @$yesterdayTS)")
+
+# [TASK 10]
+if [[ ${#toBackup[@]} -eq 0 ]]; then
+    echo "No files have been modified in the last 24 hours."
+    exit 0
+fi
+
+# [TASK 12]
+tar -czf "$backupFileName" "${toBackup[@]}"
+echo "Backup file created: $backupFileName"
+
+# [TASK 13]
+mkdir -p "$destAbsPath"
+mv "$backupFileName" "$destAbsPath/"
+echo "Backup file moved to: $destAbsPath"
+echo "Backup completed successfully!"
