@@ -1,3 +1,4 @@
+cat << 'EOF' > .github/workflows/workflow.yml
 name: Python CI
 
 on:
@@ -31,3 +32,4 @@ jobs:
       - name: Run unit tests with pytest
         run: |
           pytest
+EOF
